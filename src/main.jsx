@@ -5,43 +5,58 @@ import
     createBrowserRouter,
     RouterProvider,
   } from "react-router-dom";
+import Index from ".";
 import Contact from "./components/contact";
-import { editContactAction, getContactActions } from "./components/contactsAction";
+import { deleteContactAction, editContactAction, favAction, getContactActions } from "./components/contactsAction";
 import { getContactLoader, getContactsLoader } from "./components/contactsLoader";
 import EditContact from "./components/editContact";
 import ErrorPage from "./components/errorPage";
 import "./index.css";
 import Root from "./root";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter( [
   {
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
     loader: getContactsLoader,
-    action : getContactActions,
+    action: getContactActions,
     children: [
       {
-        path: "contacts/:contactId",
-        element: <Contact />,
-        loader: getContactLoader,
-      },
-      {
-        path: "contacts/:contactId/edit",
-        element: <EditContact/>,
-        loader: getContactLoader,
-        action: editContactAction,
-      },
-    ],
+        errorElement: <ErrorPage />,
+        children: [
+          { index: true, element: <Index /> },
+          {
+            path: "contacts/:contactId",
+            element: <Contact />,
+            loader: getContactLoader,
+            action: favAction,
+          },
+          {
+            path: "contacts/:contactId/edit",
+            element: <EditContact />,
+            loader: getContactLoader,
+            action: editContactAction,
+          },
+          {
+            path: "contacts/:contactId/destroy",
+            // element: <EditContact/>,
+            // loader: getContactLoader,
+            action: deleteContactAction,
+            errorElement: <p>error delete</p>,
+          },
+        ],
+      }
+    ]
   },
   // {
   //   path: "contacts/:contactId",
   //   element: <Contact/>,
   // },
-]);
+] );
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot( document.getElementById( "root" ) ).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={ router } />
   </React.StrictMode>
 );
